@@ -4,40 +4,27 @@ import requests
 import sys
 
 
-# Get the employee ID from the command line arguments
-employee_id = sys.argv[1]
+import requests
+import sys
 
-# Send a GET request to the API to get the user data
-user_response = requests.get(
-    'https://jsonplaceholder.typicode.com/users/' + employee_id)
+def get_employee_todo_progress(employee_id):
+    url = f"https://jsonplaceholder.typicode.com/todos?userId={employee_id}"
+    response = requests.get(url)
+    todos = response.json()
 
-# Parse the response data as JSON
-data = user_response.json()
+    completed_tasks = []
+    for todo in todos:
+        if todo['completed']:
+            completed_tasks.append(todo['title'])
 
-# Extract the employee's name from the data
-employee_name = data['name']
+    employee_name = todos[0]['username']
+    total_tasks = len(todos)
+    done_tasks = len(completed_tasks)
 
-# Send another GET request to the API to get the todo data
-todos_response = requests.get(
-    'https://jsonplaceholder.typicode.com/todos?userId=' + employee_id)
+    print(f"Employee {employee_name} is done with tasks({done_tasks}/{total_tasks}):")
+    for task in completed_tasks:
+        print(f"\t{task}")
 
-# Parse the todo data as JSON
-todos_data = todos_response.json()
-
-# Calculate the total number of tasks
-total_todos = str(len(todos_data))
-
-# Calculate the number of completed tasks
-completed_todos = str(sum(1 for task in todos_data if task['completed']))
-
-# Print the first line of the output
-print("Employee " + employee_name + " is done with tasks(" +
-      completed_todos + "/" + total_todos + "):")
-
-# Print the title of each completed task
-for task in todos_data:
-    if task['completed']:
-        print('\t ' + task['title'])
-
-if __name__ == '__main__':
-    pass
+if __name__ == "__main__":
+    employee_id = int(sys.argv[1])
+    get_employee_todo_progress(employee_id)

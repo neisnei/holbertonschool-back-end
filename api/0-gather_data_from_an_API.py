@@ -1,33 +1,33 @@
 #!/usr/bin/python3
 """Module data from an API"""
-
-
 import requests
 import sys
 
 
-if __name__ == "__main__":
-    employee_id = int(sys.argv[1])
+def get_employee_todo_progress(employee_id):
+    # Make a GET request to the API endpoint
+    response = requests.get(f'https://jsonplaceholder.typicode.com/users/{employee_id}/todos')
 
-    api_url = f'https://jsonplaceholder.typicode.com/users/{employee_id}'
-    response = requests.get(api_url)
+    # Check if the request was successful
+    if response.status_code == 200:
+        todos = response.json()
 
-    employee_name = response.json()["name"]
+        # Filter completed tasks
+        completed_tasks = [todo for todo in todos if todo['completed']]
 
-    api_url2 = f'https://jsonplaceholder.typicode.com/todos?userId={employee_id}'
-    response = requests.get(api_url2)
+        # Get the employee name
+        employee_name = todos[0]['name']
 
-    tasks = response.json()
-    total_tasks = len(tasks)
+        # Get the number of completed tasks
+        num_completed_tasks = len(completed_tasks)
 
-    completed_tasks = []
-    for task in tasks:
-        if task["completed"]:
-            completed_tasks.append(task)
+        # Get the total number of tasks
+        total_tasks = len(todos)
 
-    n_total_tasks = len(completed_tasks)
+        # Print the progress information
+        print(f"Employee {employee_name} is done with tasks ({num_completed_tasks}/{total_tasks}):")
+        for task in completed_tasks:
+            print(f"\t{task['title']}")
 
-    print(f"Employee {employee_name} is done with tasks({n_total_tasks}/{total_tasks}):")
-
-for task in completed_tasks:
-    print(f"\t {task['title']}")
+    else:
+        print(f"Error: Failed to retrieve TODO list for employee ID {employee_id}")

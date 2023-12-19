@@ -1,33 +1,31 @@
 #!/usr/bin/python3
-"""
-place holder
-"""
+"""data from an API"""
+import requests
+import sys
 
 
 if __name__ == "__main__":
+    employee_id = int(sys.argv[1])
 
-    import requests
-    from sys import argv
-    if len(argv) < 2:
-        exit()
-    todos = requests.get(
-        "https://jsonplaceholder.typicode.com/todos?userId={}&completed=true"
-        .format(argv[1]))
-    name = requests.get(
-        "https://jsonplaceholder.typicode.com/users?id={}"
-        .format(argv[1]))
-    name = name.json()
-    name = name[0]["name"]
-    todo = requests.get(
-        "https://jsonplaceholder.typicode.com/todos?userId={}".format(argv[1]))
-    todo = todo.json()
-    todo = len(todo)
-    todos = todos.json()
-    todo_list = []
+    api_url = f'https://jsonplaceholder.typicode.com/users/{employee_id}'
+    response = requests.get(api_url)
 
-    for x in todos:
-        todo_list.append("\t {}".format(x["title"]))
-    print("Employee {} is done with tasks({}/{}):"
-          .format(name, len(todos), todo))
-    for y in todo_list:
-        print(y)
+    employee_name = response.json()["name"]
+
+    api_url2 = f'https://jsonplaceholder.typicode.com/todos?userId={employee_id}'
+    response = requests.get(api_url2)
+
+    tasks = response.json()
+    total_tasks = len(tasks)
+
+    completed_tasks = []
+    for task in tasks:
+        if task["completed"]:
+            completed_tasks.append(task)
+
+    n_total_tasks = len(completed_tasks)
+
+    print(f"Employee {employee_name} is done with tasks({n_total_tasks}/{total_tasks}):")
+
+for task in completed_tasks:
+    print(f"\t {task['title']}")

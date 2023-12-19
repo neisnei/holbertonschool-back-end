@@ -1,5 +1,7 @@
 #!/usr/bin/python3
-"""data from an API"""
+"""Module data from an API"""
+
+
 import requests
 import sys
 

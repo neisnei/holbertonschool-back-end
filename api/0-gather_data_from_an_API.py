@@ -4,30 +4,40 @@ import requests
 import sys
 
 
-def get_employee_todo_progress(employee_id):
-    # Make a GET request to the API endpoint
-    response = requests.get(f'https://jsonplaceholder.typicode.com/users/{employee_id}/todos')
+# Get the employee ID from the command line arguments
+employee_id = sys.argv[1]
 
-    # Check if the request was successful
-    if response.status_code == 200:
-        todos = response.json()
+# Send a GET request to the API to get the user data
+user_response = requests.get(
+    'https://jsonplaceholder.typicode.com/users/' + employee_id)
 
-        # Filter completed tasks
-        completed_tasks = [todo for todo in todos if todo['completed']]
+# Parse the response data as JSON
+data = user_response.json()
 
-        # Get the employee name
-        employee_name = todos[0]['name']
+# Extract the employee's name from the data
+employee_name = data['name']
 
-        # Get the number of completed tasks
-        num_completed_tasks = len(completed_tasks)
+# Send another GET request to the API to get the todo data
+todos_response = requests.get(
+    'https://jsonplaceholder.typicode.com/todos?userId=' + employee_id)
 
-        # Get the total number of tasks
-        total_tasks = len(todos)
+# Parse the todo data as JSON
+todos_data = todos_response.json()
 
-        # Print the progress information
-        print(f"Employee {employee_name} is done with tasks ({num_completed_tasks}/{total_tasks}):")
-        for task in completed_tasks:
-            print(f"\t{task['title']}")
+# Calculate the total number of tasks
+total_todos = str(len(todos_data))
 
-    else:
-        print(f"Error: Failed to retrieve TODO list for employee ID {employee_id}")
+# Calculate the number of completed tasks
+completed_todos = str(sum(1 for task in todos_data if task['completed']))
+
+# Print the first line of the output
+print("Employee " + employee_name + " is done with tasks(" +
+      completed_todos + "/" + total_todos + "):")
+
+# Print the title of each completed task
+for task in todos_data:
+    if task['completed']:
+        print('\t ' + task['title'])
+
+if __name__ == '__main__':
+    pass

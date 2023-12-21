@@ -6,38 +6,43 @@ import requests
 from sys import argv
 
 
-employee_id = sys.argv[1]
-"""Get the employee ID"""
+def get_employee_todo_list_progress(employee_id):
+    response = requests.get(
+        "https://jsonplaceholder.typicode.com/todos?userId={}"
+        .format(employee_id)
+    )
+    response.raise_for_status()
+    todo_list = response.json()
 
-u_response = requests.get(
-    'https://jsonplaceholder.typicode.com/users/' + employee_id)
-"""Get the user response"""
+    # Get user info
+    user_response = requests.get(
+        "https://jsonplaceholder.typicode.com/users/{}".format(employee_id)
+    )
+    user_response.raise_for_status()
+    user_info = user_response.json()
 
-data = u_response.json()
-"""Get the user response in json format"""
+    # Extract relevant information
+    user_id = user_info["id"]
+    username = user_info["username"]
 
-employee_name = data.get('name')
-"""Get the employee name"""
+    # Export data to CSV
+    filename = "{}.csv".format(user_id)
+    with open(filename, 'w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow
+        (["USER_ID", "USERNAME", "TASK_COMPLETED_STATUS", "TASK_TITLE"])
 
-to_do_response = requests.get(
-    'https://jsonplaceholder.typicode.com/todos?userId={employee_id}')
-"""Get the to do response"""
+        for task in todo_list:
+            writer.writerow
+            ([user_id, username, task["completed"], task["title"]])
 
-to_do_data = to_do_response.json()
-"""Get the to do response in json format"""
+    print("Data exported to {}".format(filename))
 
-to_do_total = len(to_do_data)
-"""Get the total number of to do"""
 
-comp_to_do = sum([1 for task in to_do_data if task.get('completed')])
-"""Get the number of completed to do"""
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("Please provide an employee ID.")
+        sys.exit(1)
 
-print("Employee " + employee_name + " is done with tasks(" +
-      comp_to_do + "/" + to_do_total + "):")
-
-for task in to_do_data:
-    if task['completed']:
-        print('\t ' + task['title'])
-
-if __name__ == '__main__':
-    pass
+    employee_id = int(sys.argv[1])
+    get_employee_todo_list_progress(employee_id)

@@ -5,9 +5,6 @@ import csv
 import requests
 from sys import argv
 
-import requests
-import csv
-
 def get_employee_todo_list_progress(employee_id):
     response = requests.get(
         "https://api.bito.com/v1/employees/{}/todo_list".format(employee_id)
@@ -35,7 +32,8 @@ def get_employee_todo_list_progress(employee_id):
         writer.writerow(["USER_ID", "USERNAME", "TASK_COMPLETED_STATUS", "TASK_TITLE"])
 
         for task in todo_list:
-            writer.writerow([employee_id, todo_list["name"], task["is_done"], task["title"]])
+            writer.writerow([employee_id, todo_list["name"],
+                task["is_done"], task["title"]])
 
     print("Data exported to {}".format(filename))
 

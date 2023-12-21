@@ -6,16 +6,16 @@ import requests
 from sys import argv
 
 
-if __name__ == "__main__":
-    url = "https://jsonplaceholder.typicode.com/users/{}".format(argv[1])
-    response = requests.get(url)
-    name = response.json().get("username")
+if __name__ == '__main__':
+    uid = argv[1]
+    url = "https://jsonplaceholder.typicode.com/users/{}".format(uid)
+    user = requests.get(url, verify=False).json()
     url = "https://jsonplaceholder.typicode.com/todos?userId={}".format(
-        argv[1])
-    response = requests.get(url)
-    tasks = response.json()
-    with open("{}.csv".format(argv[1]), "w") as csvfile:
-        writer = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
-        for task in tasks:
-            writer.writerow([argv[1], name, task.get("completed"),
-                             task.get("title")])
+        uid)
+    todo = requests.get(url, verify=False).json()
+    with open("{}.csv".format(uid), 'w', newline='') as csvfile:
+        taskwriter = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
+        for t in todo:
+            taskwriter.writerow([int(uid), user.get('username'),
+                                 t.get('completed'),
+                                 t.get('title')])

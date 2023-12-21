@@ -1,48 +1,50 @@
 #!/usr/bin/python3
-"""Module Gather data from API"""
-
+"""
+Module Gather data from API
+"""
 import csv
 import requests
 from sys import argv
 
 
 def get_employee_todo_list_progress(employee_id):
+    """
+    Retrieves employee's TODO list progress and exports it to CSV
+    """
     response = requests.get(
-        "https://jsonplaceholder.typicode.com/todos?userId={}"
-        .format(employee_id)
+        f"https://api.bito.com/v1/employees/{employee_id}/todo_list"
     )
     response.raise_for_status()
+
     todo_list = response.json()
 
-    # Get user info
-    user_response = requests.get(
-        "https://jsonplaceholder.typicode.com/users/{}".format(employee_id)
-    )
-    user_response.raise_for_status()
-    user_info = user_response.json()
+    completed_tasks = [task for task in todo_list if task["is_done"]]
 
-    # Extract relevant information
-    user_id = user_info["id"]
-    username = user_info["username"]
+    number_of_done_tasks = len(completed_tasks)
+    total_number_of_tasks = len(todo_list)
+
+    print(
+        f"Employee {todo_list['name']} is done with tasks({number_of_done_tasks}/{total_number_of_tasks}):"
+    )
+
+    for task in completed_tasks:
+        print(f"\t{task['title']}")
 
     # Export data to CSV
-    filename = "{}.csv".format(user_id)
-    with open(filename, 'w', newline='') as file:
+    filename = f"{employee_id}.csv"
+    with open(filename, "w", newline="") as file:
         writer = csv.writer(file)
-        writer.writerow
-        (["USER_ID", "USERNAME", "TASK_COMPLETED_STATUS", "TASK_TITLE"])
+        writer.writerow(["USER_ID", "USERNAME", "TASK_COMPLETED_STATUS", "TASK_TITLE"])
 
         for task in todo_list:
-            writer.writerow
-            ([user_id, username, task["completed"], task["title"]])
+            writer.writerow(
+                [employee_id, todo_list["name"], task["is_done"], task["title"]]
+            )
 
-    print("Data exported to {}".format(filename))
+    print(f"Data exported to {filename}")
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Please provide an employee ID.")
-        sys.exit(1)
+    employee_id = int(input("Enter employee ID: "))
 
-    employee_id = int(sys.argv[1])
     get_employee_todo_list_progress(employee_id)

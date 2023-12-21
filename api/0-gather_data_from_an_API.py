@@ -1,7 +1,14 @@
 #!/usr/bin/python3
-"""Using employee ID returns information progress"""
+"""
+This module uses Python to make requests to a REST API.
+fix
+It fetches data about a specific employee's tasks
+and prints a summary of the tasks completed and the
+titles of the completed tasks.
+"""
 import requests
-from sys import argv
+import sys
+
 
 # Get the employee ID from the command line arguments
 employee_id = sys.argv[1]

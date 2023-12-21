@@ -6,41 +6,46 @@ import requests
 from sys import argv
 
 
-def get_employee_todo_list_progress(employee_id):
-    response = requests.get(
-        "https://api.bito.com/v1/employees/{}/todo_list".format(employee_id)
-    )
-    response.raise_for_status()
+# Get the employee id
+employee_id = sys.argv[1]
+# Set the url and get a respnse
+user_response = requests.get(
+    f'https://jsonplaceholder.typicode.com/users/{employee_id}')
+# Get data in json form
 
-    todo_list = response.json()
+data = user_response.json()
+# Get the name of the employee
+employee_name = data['name']
 
-    completed_tasks = [task for task in todo_list if task["is_done"]]
+# Get the todo data fro the API
+todos_response = requests.get(
+    f'https://jsonplaceholder.typicode.com/todos?userId={employee_id}')
+# Get the data in json form
+todos_data = todos_response.json()
 
-    number_of_done_tasks = len(completed_tasks)
-    total_number_of_tasks = len(todo_list)
+# Get the total number of tasks
+total_todos = len(todos_data)
+# Get the number of completed tasks
+ok_todos = sum(1 for task in todos_data if task['completed'])
 
-    print("Employee {} is done with tasks({}/{}):".format(
-        todo_list["name"], number_of_done_tasks, total_number_of_tasks
-    ))
+# Print the first line of the output
+print(
+    f'Employee {employee_name} is done with tasks({ok_todos}/{total_todos}):')
 
-    for task in completed_tasks:
-        print("\t{}".format(task["title"]))
+# Print the title of each completed task
+for task in todos_data:
+    if task['completed']:
+        print('\t ' + task['title'])
 
-    # Export data to CSV
-    filename = "{}.csv".format(employee_id)
-    with open(filename, 'w', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow
-        (["USER_ID", "USERNAME", "TASK_COMPLETED_STATUS", "TASK_TITLE"])
+# Export using csv format
+with open('USER_ID.csv', 'w') as csvfile:
+    # Ceating a csv writer object
+    # Quoting=csv.QUOTE_ALL to quote all the fields
+    writer = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
+    for task in todos_data:
+        # Writing the fields to the csv file
+        writer.writerow([employee_id, employee_name, task['completed'],
+                         task['title']])
 
-        for task in todo_list:
-            writer.writerow
-            ([employee_id, todo_list["name"], task["is_done"], task["title"]])
-
-    print("Data exported to {}".format(filename))
-
-
-if __name__ == "__main__":
-    employee_id = int(input("Enter employee ID: "))
-
-    get_employee_todo_list_progress(employee_id)
+if __name__ == '__main__':
+    pass

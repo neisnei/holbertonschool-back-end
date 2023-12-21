@@ -8,7 +8,8 @@ from sys import argv
 
 def get_employee_todo_list_progress(employee_id):
     response = requests.get(
-        "https://jsonplaceholder.typicode.com/todos?userId={}".format(employee_id)
+        "https://jsonplaceholder.typicode.com/todos?userId={}"
+        .format(employee_id)
     )
     response.raise_for_status()
     todo_list = response.json()
@@ -28,10 +29,12 @@ def get_employee_todo_list_progress(employee_id):
     filename = "{}.csv".format(user_id)
     with open(filename, 'w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(["USER_ID", "USERNAME", "TASK_COMPLETED_STATUS", "TASK_TITLE"])
+        writer.writerow
+        (["USER_ID", "USERNAME", "TASK_COMPLETED_STATUS", "TASK_TITLE"])
 
         for task in todo_list:
-            writer.writerow([user_id, username, task["completed"], task["title"]])
+            writer.writerow
+            ([user_id, username, task["completed"], task["title"]])
 
     print("Data exported to {}".format(filename))
 

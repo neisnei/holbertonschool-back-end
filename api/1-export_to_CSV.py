@@ -1,13 +1,4 @@
 #!/usr/bin/python3
-"""
-Module Gather data from API
-"""
-import csv
-import requests
-from sys import argv
-
-
-#!/usr/bin/python3
 """Module Gather data from API"""
 
 import csv

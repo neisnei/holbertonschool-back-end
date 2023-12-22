@@ -8,6 +8,7 @@ import json
 import requests
 import sys
 
+
 def get_employee_todo_progress(employee_id):
     # URL for the JSONPlaceholder API
     base_url = "https://jsonplaceholder.typicode.com"
@@ -24,7 +25,8 @@ def get_employee_todo_progress(employee_id):
     completed_tasks = [task for task in todo_data if task["completed"]]
 
     # Display progress information
-    print(f"Employee {user_data['name']} is done with tasks({len(completed_tasks)}/{len(todo_data)}):")
+    print(f"Employee {user_data['name']} 
+            is done with tasks({len(completed_tasks)}/{len(todo_data)}):")
     for task in completed_tasks:
         print(f"\t{task['title']}")
 
@@ -39,4 +41,3 @@ if __name__ == "__main__":
 
     # Call the function to get and display employee TODO list progress
     get_employee_todo_progress(employee_id)
-

@@ -5,6 +5,7 @@ data about a specific employee
 and prints a summary of their TODO list progress.
 """
 
+
 import json
 import requests
 import sys

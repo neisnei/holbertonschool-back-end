@@ -9,7 +9,8 @@ import json
 import requests
 import sys
 
-def get_employee_todo_list_progress(employee_id):
+
+        def get_employee_todo_list_progress(employee_id):
   """Gets the employee TODO list progress from the REST API.
 
   Args:

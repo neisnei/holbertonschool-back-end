@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 """
 This script uses the JSONPlaceholder API to fetch
-data about a specific employee
-and prints a summary of their TODO list progress.
+data specific employee
+and prints summary TODO list progress.
 """
 
 import requests

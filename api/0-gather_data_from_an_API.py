@@ -1,43 +1,52 @@
-#!/usr/bin/python3
-"""
-This script uses the JSONPlaceholder API to fetch
-data about a specific employee
-and prints a summary of their TODO list progress.
-"""
-import json
+!/usr/bin/python3
+"""Script to return info about todo list progress"""
 import requests
-import sys
+from requests import get
+from sys import argv
 
 
-def get_employee_todo_progress(employee_id):
-    # URL for the JSONPlaceholder API
-    base_url = "https://jsonplaceholder.typicode.com"
+def information_employee():
+    """Returns information about employees"""
+    id_employee = int(argv[1])
+    employee_name = ""
+    number_of_done_task = 0
+    total_number_of_task = 0
+    task_title = []
 
-    # Get user details
-    user_response = requests.get(f"{base_url}/users/{employee_id}")
+    url_users = 'https://jsonplaceholder.typicode.com/users'
+
+    # Get user data
+    user_url = f"https://jsonplaceholder.typicode.com/users/{id_employee}"
+    user_response = requests.get(user_url)
     user_data = user_response.json()
+    employee_name = user_data['name']
 
-    # Get user's TODO list
-    todo_response = requests.get(f"{base_url}/todos?userId={employee_id}")
-    todo_data = todo_response.json()
+    url_todos = 'https://jsonplaceholder.typicode.com/todos'
 
-    # Filter completed tasks
-    completed_tasks = [task for task in todo_data if task["completed"]]
+    response_one = get(url_users)
+    response_two = get(url_todos)
 
-    # Display progress information
-    print(f"Employee {user_data['name']} 
-            is done with tasks({len(completed_tasks)}/{len(todo_data)}):")
-    for task in completed_tasks:
-        print(f"\t{task['title']}")
+    if response_one.status_code == 200:
+        response_usr = response_one.json()
+        response_tod = response_two.json()
+
+        for user in response_usr:
+            if (user['id'] == id_employee):
+                employee_name = user['name']
+
+                for tod in response_tod:
+                    if tod['userId'] == id_employee:
+                        total_number_of_task += 1
+                        if tod['completed'] is True:
+                            number_of_done_task += 1
+                            task_title.append(tod['title'])
+
+        print('Employee {} is done with tasks({}/{}):'
+              .format(employee_name, number_of_done_task,
+                      total_number_of_task))
+        for title in task_title:
+            print('\t {}'.format(title))
+
 
 if __name__ == "__main__":
-    # Check if the correct number of command-line arguments is provided
-    if len(sys.argv) != 2:
-        print("Usage: python script_name.py <employee_id>")
-        sys.exit(1)
-
-    # Extract employee ID from command-line argument
-    employee_id = int(sys.argv[1])
-
-    # Call the function to get and display employee TODO list progress
-    get_employee_todo_progress(employee_id)
+    information_employee()

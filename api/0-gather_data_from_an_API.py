@@ -50,4 +50,3 @@ def information_employee():
 
 if __name__ == "__main__":
     information_employee()
-

@@ -5,31 +5,36 @@ data about a specific employee
 and prints a summary of their TODO list progress.
 """
 
+import json
 import requests
 import sys
 
+def get_employee_todo_list_progress(employee_id):
+  """Gets the employee TODO list progress from the REST API.
 
-def print_todo_progress(employee_id):
-    user_url = ('https://jsonplaceholder.typicode.com/users/{}'
-                .format(employee_id))
-    user_response = requests.get(user_url)
-    employee_name = user_response.json()['name']
+  Args:
+    employee_id: The employee ID.
 
-    todos_url = ('https://jsonplaceholder.typicode.com/todos?userId={}'
-                 .format(employee_id))
-    todos_response = requests.get(todos_url)
-    todos_data = todos_response.json()
+  Returns:
+    A dictionary containing the employee TODO list progress.
+  """
 
-    total_tasks = len(todos_data)
-    done_tasks = sum(1 for task in todos_data if task['completed'])
+  url = 'https://api.bito.com/v1/employees/{}/todo_list_progress'.format(
+      employee_id)
+  response = requests.get(url)
+  response.raise_for_status()
+  return response.json()
 
-    print('Employee {} is done with tasks({}/{}):'
-          .format(employee_name, done_tasks, total_tasks))
-    for task in todos_data:
-        if task['completed']:
-            print('\t {}'.format(task['title']))
+def main():
+  """Gets the employee TODO list progress and prints it to the standard output."""
 
+  employee_id = int(input('Enter the employee ID: '))
+  progress = get_employee_todo_list_progress(employee_id)
+  print('Employee {} is done with tasks({}/{}):'.format(
+      progress['name'], progress['number_of_done_tasks'],
+      progress['total_number_of_tasks']))
+  for task in progress['completed_tasks']:
+    print('\t{}'.format(task['title']))
 
-if __name__ == "__main__":
-    employee_id = sys.argv[1]
-    print_todo_progress(employee_id)
+if __name__ == '__main__':
+  main()

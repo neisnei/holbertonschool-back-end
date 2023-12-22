@@ -1,28 +1,35 @@
 #!/usr/bin/python3
 """
-Module script returns information about list progress
+This script uses the JSONPlaceholder API to fetch
+data about a specific employee
+and prints a summary of their TODO list progress.
 """
+
 import requests
-from sys import argv
+import sys
+
+
+def print_todo_progress(employee_id):
+    user_url = ('https://jsonplaceholder.typicode.com/users/{}'
+                .format(employee_id))
+    user_response = requests.get(user_url)
+    employee_name = user_response.json()['name']
+
+    todos_url = ('https://jsonplaceholder.typicode.com/todos?userId={}'
+                 .format(employee_id))
+    todos_response = requests.get(todos_url)
+    todos_data = todos_response.json()
+
+    total_tasks = len(todos_data)
+    done_tasks = sum(1 for task in todos_data if task['completed'])
+
+    print('Employee {} is done with tasks({}/{}):'
+          .format(employee_name, done_tasks, total_tasks))
+    for task in todos_data:
+        if task['completed']:
+            print('\t {}'.format(task['title']))
 
 
 if __name__ == "__main__":
-    if len(argv) > 1:
-        user = argv[1]
-        url = "https://jsonplaceholder.typicode.com/"
-        req = requests.get("{}users/{}".format(url, user))
-        name = req.json().get("name")
-        if name is not None:
-            jreq = requests.get(
-                "{}todos?userId={}".format(
-                    url, user)).json()
-            alltsk = len(jreq)
-            completedtsk = []
-            for t in jreq:
-                if t.get("completed") is True:
-                    completedtsk.append(t)
-            count = len(completedtsk)
-            print("Employee {} is done with tasks({}/{}):"
-                  .format(name, count, alltsk))
-            for title in completedtsk:
-                print("\t {}".format(title.get("title")))
+    employee_id = sys.argv[1]
+    print_todo_progress(employee_id)

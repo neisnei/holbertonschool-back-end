@@ -19,22 +19,23 @@ def get_employee_todo_list_progress(employee_id):
     A dictionary containing the employee TODO list progress.
   """
 
-  url = 'https://api.bito.com/v1/employees/{}/todo_list_progress'.format(
+        url = 'https://api.bito.com/v1/employees/{}/todo_list_progress'.format(
       employee_id)
-  response = requests.get(url)
-  response.raise_for_status()
-  return response.json()
+        response = requests.get(url)
+        response.raise_for_status()
+        return response.json()
+
 
 def main():
-  """Gets the employee TODO list progress and prints it to the standard output."""
+  """Gets employee TODO list progress and prints to standard output."""
 
-  employee_id = int(input('Enter the employee ID: '))
-  progress = get_employee_todo_list_progress(employee_id)
-  print('Employee {} is done with tasks({}/{}):'.format(
-      progress['name'], progress['number_of_done_tasks'],
-      progress['total_number_of_tasks']))
+        employee_id = int(input('Enter the employee ID: '))
+        progress = get_employee_todo_list_progress(employee_id)
+        print('Employee {} is done with tasks({}/{}):'.format(
+        progress['name'], progress['number_of_done_tasks'],
+        progress['total_number_of_tasks']))
   for task in progress['completed_tasks']:
-    print('\t{}'.format(task['title']))
+        print('\t{}'.format(task['title']))
 
 if __name__ == '__main__':
   main()

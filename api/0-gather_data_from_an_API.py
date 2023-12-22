@@ -8,34 +8,35 @@ import json
 import requests
 import sys
 
+def get_employee_todo_progress(employee_id):
+    # URL for the JSONPlaceholder API
+    base_url = "https://jsonplaceholder.typicode.com"
 
-        def get_employee_todo_list_progress(employee_id):
-  """Gets the employee TODO list progress from the REST API.
+    # Get user details
+    user_response = requests.get(f"{base_url}/users/{employee_id}")
+    user_data = user_response.json()
 
-  Args:
-    employee_id: The employee ID.
+    # Get user's TODO list
+    todo_response = requests.get(f"{base_url}/todos?userId={employee_id}")
+    todo_data = todo_response.json()
 
-  Returns:
-    A dictionary containing the employee TODO list progress.
-  """
+    # Filter completed tasks
+    completed_tasks = [task for task in todo_data if task["completed"]]
 
-        url = 'https://api.bito.com/v1/employees/{}/todo_list_progress'.format(
-      employee_id)
-        response = requests.get(url)
-        response.raise_for_status()
-        return response.json()
+    # Display progress information
+    print(f"Employee {user_data['name']} is done with tasks({len(completed_tasks)}/{len(todo_data)}):")
+    for task in completed_tasks:
+        print(f"\t{task['title']}")
 
+if __name__ == "__main__":
+    # Check if the correct number of command-line arguments is provided
+    if len(sys.argv) != 2:
+        print("Usage: python script_name.py <employee_id>")
+        sys.exit(1)
 
-def main():
-  """Gets employee TODO list progress and prints to standard output."""
+    # Extract employee ID from command-line argument
+    employee_id = int(sys.argv[1])
 
-        employee_id = int(input('Enter the employee ID: '))
-        progress = get_employee_todo_list_progress(employee_id)
-        print('Employee {} is done with tasks({}/{}):'.format(
-        progress['name'], progress['number_of_done_tasks'],
-        progress['total_number_of_tasks']))
-  for task in progress['completed_tasks']:
-        print('\t{}'.format(task['title']))
+    # Call the function to get and display employee TODO list progress
+    get_employee_todo_progress(employee_id)
 
-if __name__ == '__main__':
-  main()
